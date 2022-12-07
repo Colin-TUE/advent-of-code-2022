@@ -40,4 +40,17 @@ def compute(file):
 
         prios.append(priosOfItems[0])
 
+    for group in range(0, len(lines), 3):
+        rucksack1 = lines[group].strip("\n")
+        rucksack2 = lines[group+1].strip("\n")
+        rucksack3 = lines[group+2].strip("\n")
+
+        groupBadges = list(set(rucksack1) & set(rucksack2) & set(rucksack3))
+        prioOfBadge = list(map(computePrio, groupBadges))
+        if len(prioOfBadge) > 1:
+            raise ValueError("Multiple group badges found")
+
+        badgePrios.append(prioOfBadge[0])
+        
+
     return sum(prios), sum(badgePrios)
