@@ -1,13 +1,15 @@
 import array
 
+
 def toInt(s):
     return int(s)
+
 
 def compute(file):
     f = open(file, "r")
     lines = f.readlines()
 
-    overlappingSections = array.array('i', [])
+    containedSections = array.array('i', [])
 
     for line in lines:
         assignments = line.strip("\n").split(",")
@@ -28,9 +30,9 @@ def compute(file):
         isTwoContainedInOne = all(section >= elfOneLow and section <=
                                   elfOneUpp for section in elfTwoSections)
 
-        overlappingSections.append(
+        containedSections.append(
             isOneCOntainedInTwo or isTwoContainedInOne if 1 else 0)
 
     result2 = 252
 
-    return sum(overlappingSections), result2
+    return sum(containedSections), result2
