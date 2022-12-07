@@ -10,6 +10,7 @@ def compute(file):
     lines = f.readlines()
 
     containedSections = array.array('i', [])
+    overlappingPairs = array.array('i', [])
 
     for line in lines:
         assignments = line.strip("\n").split(",")
@@ -18,7 +19,6 @@ def compute(file):
 
         elfOneSections = range(elfOne[0], elfOne[1]+1)
         elfTwoSections = range(elfTwo[0], elfTwo[1]+1)
-        overlap = set(elfOneSections) & set(elfTwoSections)
 
         elfTwoLow = elfTwo[0]
         elfTwoUpp = elfTwo[1]
@@ -33,6 +33,8 @@ def compute(file):
         containedSections.append(
             isOneCOntainedInTwo or isTwoContainedInOne if 1 else 0)
 
-    result2 = 252
+        overlap = set(elfOneSections) & set(elfTwoSections)
 
-    return sum(containedSections), result2
+        overlappingPairs.append(len(overlap) > 0 if 1 else 0)
+
+    return sum(containedSections), sum(overlappingPairs)
