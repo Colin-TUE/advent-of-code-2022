@@ -1,6 +1,6 @@
 from algo import compute
 
-path, ass2 = compute("input.csv")
+path, pathToA = compute("input.csv")
 
 print(f"Shortest Path has length: {path}")
-print(f"Value assignment 2: {ass2}")
+print(f"Shortest Path to any A has length: {pathToA}")

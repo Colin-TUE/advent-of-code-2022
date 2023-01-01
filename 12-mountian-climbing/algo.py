@@ -1,3 +1,6 @@
+from copy import deepcopy
+
+
 def compute(file):
     f = open(file, "r")
     lines = f.readlines()
@@ -31,24 +34,39 @@ def compute(file):
         y += 1
         x = 0
 
+    print(f"Start: {start.toString()}")
+    print(f"Target: {target.toString()}")
+
     for row in elevations:
         for p in row:
             if p.x < 0 or p.y < 0 or p.elevation < 0:
                 print(elevationsToString(elevations, start, target))
                 raise ValueError(f"Uninitialized point")
 
-    shortestPath = computeShortestPath(elevations, target, start)
-    # for p in shortestPath:
-    #     print(p.toString())
-
     print("=====Elevations=====")
     print(elevationsToString(elevations, start, target))
-    map = mapToString(elevations, shortestPath, start, target)
+
     print("=====Route=====")
-    print(map)
+    elevationsFromS = deepcopy(elevations)
+    shortestPath = computeShortestPath(
+        elevationsFromS, target, elevationsFromS[start.x][start.y])
+    pathStr = pathToString(elevations, shortestPath, start, target)
+    print(pathStr)
+
+    print("=====Optimal Route=====")
+    allShortestPaths: list[list['Vertex']] = []
+    for i in range(0, maxY):
+        elevationsFromA = deepcopy(elevations)
+        potentialStart = elevationsFromA[i][0]
+        onePathToEastEdge = computeShortestPath(
+            elevationsFromA, target, potentialStart)
+        allShortestPaths.append(onePathToEastEdge)
+    shortestToAnyA = sorted(allShortestPaths, key=lambda p: len(p))[0]
+    optPathStr = pathToString(elevations, shortestToAnyA, start, target)
+    print(optPathStr)
 
     result1 = len(shortestPath) - 1
-    result2 = 256
+    result2 = len(shortestToAnyA) - 1
 
     return result1, result2
 
@@ -130,7 +148,7 @@ def elevationsToString(elevations: list[list['Vertex']], start: 'Vertex', target
     return map
 
 
-def mapToString(elevations: list[list['Vertex']], path: list['Vertex'], start: 'Vertex', target: 'Vertex'):
+def pathToString(elevations: list[list['Vertex']], path: list['Vertex'], start: 'Vertex', target: 'Vertex'):
     map = list(elevationsToString(elevations, start, target))
 
     for i in range(0, len(path) - 1):
