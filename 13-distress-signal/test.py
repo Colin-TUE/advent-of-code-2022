@@ -1,11 +1,11 @@
 from algo import compute
 
-sumIndices, ass2 = compute("example.csv")
+sumIndices, decoderKey = compute("example.csv")
 
 assert sumIndices == 13, f"expected 13 got {sumIndices}"
-# assert ass2 == 252, f"expected 252 got {ass2}"
+assert decoderKey == 140, f"expected 140 got {decoderKey}"
 
-sumIndices, ass2 = compute("test.csv")
+sumIndices, decoderKey = compute("test.csv")
 
 assert sumIndices == 43, f"expected 43 got {sumIndices}"
-# assert ass2 == 252, f"expected 252 got {ass2}"
+assert decoderKey == 396, f"expected 396 got {decoderKey}"

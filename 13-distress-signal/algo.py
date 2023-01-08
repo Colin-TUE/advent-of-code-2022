@@ -1,4 +1,5 @@
 import array
+from functools import cmp_to_key
 
 
 def compute(file):
@@ -17,7 +18,8 @@ def compute(file):
         print(f"Processing pair {pairNr}")
         # print(pair.toString())
 
-        pair.mark(verifyInOrder(pair.first.signal, pair.second.signal)[0])
+        result = verifyInOrder(pair.first.signal, pair.second.signal)
+        pair.mark(result[0])
         print(f"Is in order: {pair.isInOrder}")
         print("==========")
 
@@ -29,9 +31,48 @@ def compute(file):
     i = 0
     [accumulator := fold(accumulator, x) for x in signalPairs]
     result1 = accumulator
-    result2 = 256
+
+    key1 = Signal("[[2]]")
+    key2 = Signal("[[6]]")
+
+    allSignals = [key1, key2]
+    for p in signalPairs:
+        allSignals.append(p.first)
+        allSignals.append(p.second)
+
+    allSignals.sort(key=cmp_to_key(compareSignals))
+    print("=====Sorted=====")
+    for s in allSignals:
+        print(s.toString())
+    print("================")
+
+    indexKey1 = allSignals.index(key1) + 1
+    indexKey2 = allSignals.index(key2) + 1
+    result2 = indexKey1 * indexKey2
 
     return result1, result2
+
+
+def compareFlattenedSignals(one, other):
+    if type(one) is FlattenedSignal and type(other) is FlattenedSignal:
+        inOrder = verifyInOrder(one.signal, other.signal)
+        return -1 if inOrder[0] else 1
+    else:
+        raise ValueError(f"Did not expect non signal types: {one} vs {other}")
+
+
+def compareSignals(one, other):
+    if type(one) is Signal and type(other) is Signal:
+        print(f"Comparing Lists:\n -{one.toString()}\n -{other.toString()}")
+        inOrder = verifyInOrder(one.signal, other.signal)
+        if inOrder[0]:
+            print("one is smaller")
+            return -1
+        else:
+            print("one is larger")
+            return 1
+    else:
+        raise ValueError(f"Did not expect non signal types: {one} vs {other}")
 
 
 def verifyInOrder(leftList, rightList):
@@ -95,3 +136,24 @@ class Signal():
 
     def toString(self):
         return str(self.signal)
+
+
+class FlattenedSignal():
+    def __init__(self, signal: 'Signal') -> None:
+        self.signal = flattenList(signal.signal)
+
+    def toString(self):
+        return str(self.signal)
+
+
+def flattenList(someList):
+    flatList = []
+
+    for element in someList:
+        if type(element) is list:
+            flatten = flattenList(element)
+            for item in flatten:
+                flatList.append(item)
+        else:
+            flatList.append(element)
+    return flatList
